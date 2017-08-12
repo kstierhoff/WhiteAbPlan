@@ -1,0 +1,255 @@
+---
+title: "White Abalone Research Plan"
+author: "Kevin L. Stierhoff"
+date: '`r format(Sys.time(), "%d %B %Y")`'
+output:
+  pdf_document:
+    fig_caption: no
+    toc: yes
+  html_document:
+    toc: yes
+  word_document:
+    reference_docx: //swc-storage1/ast1/LITERATURE/Rmarkdown/template/report_template_Rmarkdown.docx
+    toc: yes
+header-includes:
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+csl: //swc-storage1/ast1/LITERATURE/Rmarkdown/csl/ices-journal-of-marine-science.csl
+bibliography: D:/DOCUMENTS/BibTeX/stierhoff_abalone.bib
+---
+
+```{r Setup,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
+rm(list=ls())
+# List packages required to run the script
+pkgs <- c("cowplot","devtools","RODBC","png","knitr","tidyverse")
+
+# Install and load all CRAN packages provided from a character vector
+load_pkgs = function(pkgs){
+  new_pkgs = pkgs[!(pkgs %in% installed.packages()[ ,'Package'])]
+  if(length(new_pkgs) > 0) install.packages(new_pkgs)
+  invisible(lapply(pkgs,function(x)
+    suppressPackageStartupMessages(library(x,character.only=TRUE))))
+}
+# Load packages
+load_pkgs(pkgs)
+# Install and load surveyR package from github
+if("surveyR" %in% installed.packages()[ ,'Package'] == FALSE){
+  install_github("kstierhoff/surveyR")
+}
+# Load surveyR package
+library(surveyR)
+# set system time zone to GMT
+Sys.setenv(tz = "GMT")
+# determines method of table generation (whether kable or xtable) for best formatting
+doc.type <-knitr::opts_knit$get('rmarkdown.pandoc.to')
+if(is.null(doc.type)){doc.type <- 'docx'}
+
+# global knitr chunk options
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,dev="png",dev.args=list(type="cairo"),dpi=150)
+# User options
+get.db <- FALSE
+```  
+
+```{r ImportTrawlData}
+if (get.db == TRUE){
+  # Configure ODBC connection to TRAWL database
+    channel <- odbcConnect(dsn = 'ROV2')
+    # Import trawl database tables
+    logs	<-      sqlFetch(channel,"dbo.tbl_DIVE_LOG")
+    events <-     sqlFetch(channel,"dbo.tbl_DIVE_EVENTS")
+    lengths <-    sqlFetch(channel,"dbo.tbl_ABALONE_LENGTHS")
+    photo.info <- sqlFetch(channel,"dbo.tbl_PHOTO_INFO") 
+    photo.obs  <- sqlFetch(channel,"dbo.tbl_PHOTO_OBS")
+    spp.info <-   sqlFetch(channel,"dbo.tlu_SPECIES_CODES")
+    nav <-        sqlQuery(channel,"
+        SELECT dbo.tbl_NAV_DATA.nav_id, dbo.tbl_NAV_DATA.object_id, dbo.tbl_NAV_DATA.dive_name,
+               dbo.tbl_NAV_DATA.date_time, dbo.tbl_NAV_DATA.lat_dd_r AS lat, dbo.tbl_NAV_DATA.lon_dd_r AS lon,
+               dbo.tbl_NAV_DATA.depth_r AS depth, dbo.tbl_NAV_DATA.speed_r AS speed, dbo.tbl_NAV_DATA.pitch,
+               dbo.tbl_NAV_DATA.roll,dbo.tbl_NAV_DATA.altitude,dbo.tbl_NAV_DATA.disp_r,dbo.tbl_NAV_DATA.cum_disp_r
+        FROM dbo.tbl_DIVE_LOG INNER JOIN dbo.tbl_NAV_DATA ON dbo.tbl_DIVE_LOG.dive_name = dbo.tbl_NAV_DATA.dive_name
+        WHERE (((dbo.tbl_DIVE_LOG.dive_type)='AB'));")
+    # Close database channel
+    close(channel)
+    
+    # Filter and merge data
+    logs <- logs %>% filter(dive_type == "AB",for_analysis == 1) %>% 
+      mutate(year = as.numeric(format(dive_date,format="%Y")))
+    nav  <- nav  %>% inner_join(dplyr::select(logs,dive_name,site_general,site_specific,rov_code),by="dive_name")
+    photo.info <- photo.info %>% inner_join(dplyr::select(logs,dive_name,rov_code,site_general,site_specific))
+    photo.obs <- photo.obs %>% 
+      inner_join(dplyr::select(spp.info,species_code,sci_name,sci_name_full,common_name)) %>% 
+      inner_join(dplyr::select(photo.info,-comment),by="photo_id") 
+    
+    # Save imported database data to .Rdata file
+    save(logs,nav,events,lengths,photo.info,photo.obs,spp.info,file="../Data/ROV_data.Rdata")
+  } else {
+  # Load previously imported database data
+  load("../Data/ROV_data.Rdata")
+}
+
+# Filter and merge data
+```
+
+
+\newpage  
+
+# Executive Summary  
+
+**TBD**
+
+\newpage  
+
+# Background and purpose  
+## Population status  
+
+## Threats  
+
+## Recovery  
+
+# National priorities for white abalone research  
+## White Abalone Recovery Plan  
+In 2008, NOAA finalized the White Abalone Recovery Plan [hereafter, Recovery Plan; @Service2008]
+
+## Species in the Spotlight  
+NOAA's [Species in the Spotlight](http://www.nmfs.noaa.gov/stories/2015/05/05_14_15species_in_the_spotlight.html) initiative is part of a strategy to marshal resources on species listed under the Endangered Species Act of 1973 (ESA) for which immediate, targeted efforts are vital for stabilizing their populations and preventing their extinction. Eight species were identified by the National Marine Fisheries Service (NMFS) as among the most at-risk of extinction, including [white abalone](http://www.nmfs.noaa.gov/stories/2015/08/spotlight_whiteabalone.html).
+
+These species were identified as most at-risk of extinction based on three criteria (1) endangered listing, (2) declining populations, and (3) are considered a recovery priority #1[^1] . We know the threats facing these species and understand the management actions we can take that will have a high probability of success. The [5-Year Action Plan actions](http://www.nmfs.noaa.gov/stories/2016/02/docs/white__abalone_spotlight_species_5_year_action_plan_final_web.pdf) builds upon existing recovery or conservation plans and details the focused efforts needed over the next 5 years to reduce threats and stabilize population declines. We will engage our partners in the public and private sectors in actions they can take to support this important effort. We will report on our progress through the Biennial Report to Congress and post updates on our [website](http://www.nmfs.noaa.gov/pr/). This strategy will guide agency actions where we have the discretion to make critical investments to safeguard these most endangered species. The strategy will not divert resources away from the important and continued efforts to support all ESA-listed species under our authority. Many of our species have long-standing conservation programs supported by multiple partners. We remain committed to those programs. This action plan is designed to highlight the actions that can be taken by us, other federal and state resource agencies, environmental organizations, Native American Tribes and other partners to turn the trend around for this species from a declining trajectory to a trajectory towards recovery.  
+
+[^1]: Priority #1 is defined as a species whose extinction is almost certain in the immediate future because of a rapid population decline or habitat destruction, whose limiting factors and threats are well understood and the needed management actions are known and have a high probability of success, and is a species that is in conflict with construction or other developmental projects or other forms of economic activity. NMFS Endangered and Threatened Listing Recovery Guidelines (55 FR 24296, June 15, 1990).  
+
+\newpage  
+
+# Role of the Southwest Fisheries Science Center  
+
+\newpage  
+
+# Research themes
+## Research theme 1 - Remotely operated vehicle operations  
+The Recovery Plan identifies several critical actions to aid the recovery of this endangered species, two of which have been research foci since 2001: 1) assess and monitor wild subpopulations in cooperation with state, Federal, and international partners; 2) identify and characterize existing and potential white abalone habitat. White abalone have the deepest depth distribution of all abalone species in California [@Leighton2000] **(Hobday, others)**, occurring at the highest density between 30 and 60 m. The deep distribution of white abalone habitat poses logistical challenges to sampling using traditional visual survey methods such as SCUBA, which is constrained by depth and bottom-time restrictions. For this reason, remote sensing technologies, primarily remotely operated vehicles (ROVs) and active acoustic sensors, have been developed and/or used by scientists at the SWFSC and their partners to conduct this research.  
+
+### Research foci for Theme 1  
+#### Demography of deep-water populations in historically imporant areas  
+
+The SWFSC and its partners have used ROVs to survey white abalone at a number of historically important locations throughout the Southern California Bight (SCB) since 2000 (**Table: Survey site summary **). Monitoring effort has been greatest at Tanner Bank, San Clemente Island, Santa Catalina Island, and Cortes Banks and has produced estimates of population size, size distribution, and seabed habitat at those sites [@Butler2006;@Stierhoff2012a;@Stierhoff2014;@Stierhoff2014a]. Monitoring has focused primarily on the white abalone population Tanner Bank, which had the greatest density and largest estimated population size based on early surveys [@Butler2006], and at San Clemente Island where commercial landings were greatest [@Hobday2000;@Hobday2001].  
+
+**Table: Survey site summary.** A summary of remotely operated vehicle survey effort by site and year.
+
+```{r ROVSiteSummary}
+site.summ.all <- logs %>% 
+  group_by(site_general) %>% 
+  summarise(dives = length(dive_id),
+            years = glue::collapse(unique(year),sep=", ")) %>% 
+  arrange(desc(dives))
+names(site.summ.all) <- c("Survey site","Dives","Years")
+kable(site.summ.all)
+```
+
+In 2002, bathymetric mapping was conducted at Tanner Bank, Cortes Bank, San Clemente Island, and Farnsworth Bank (off the coast of Santa Catalina Island) using a multibeam sonar to identify areas of rocky substrate and quantify the amount of potentially available white abalone habitat (**Figure: White Abalone Habitats**). Next, depth-stratified visual transect surveys were conducted using an ROV at each location to estimate white abalone density, abundance, and size structure. The results from surveys in 2002 and 2004 provided a “baseline” estimate of available habitat, abundance, and size structure of the populations in these areas. Subsequent visual surveys conducted at Tanner Bank in 2008 and 2010 indicated that the population at that site had declined by approximately 78% since 2002 despite protection under ESA [@Stierhoff2012]. Data from the most recent survey conducted at Tanner Bank and Cortes Bank in 2014 are still being analyzed, but preliminary results indicate the the population at those two sites remain severely depleted (K. Stierhoff, unpublished data). The majority of white abalone observed at Tanner Bank have been solitary (> 2 m nearest neighbor distance), large (> 9 cm), and the mean length in each survey has increased over time, which suggests an aging population of mostly isolated individuals with little or no indication of recent recruitment. A survey at San Clemente Island in 2012 suggested a small but stable remnant population [@Stierhoff2014], but the extremely low density at that site resulted in population estimates with high uncertainty. Another survey at San Clemente Island in 2015 observed only two white abalone in 36 transects, and suggested a decrease in abundance at that site (K. Stierhoff, unpublished data), but the large error around the abundance estimates makes the interpretation of population trends difficult.  
+
+#### Exporatory surveys in other potentially viable deep-water habitats  
+In addition to the more intensive sampling conducted at the long-term monitoring sites, smaller-scale surveys have been conducted at some areas where white abalone have been observed or are thought to occur (**Table: Survey site summary**). In 2008, five visual transect surveys were conducted at Farnsworth Bank, but only one white abalone was observed. In 2015, 20 visual transect surveys were conducted at two sites near Palos Verdes, CA (“The Ridges” and “Horseshoe Kelp”). These two sites are relatively shallow (approximately 20-40 m), have been surveyed by numerous groups using SCUBA, and are known to be habitat for white and pinto abalone (_H. kamtschatkana_). During that survey, three white abalone were observed and 29 pinto abalone. 
+
+The delisting of white abalone under ESA requires consideration of the species' population status throughout its known geograpical range, which extends south to Punta Abreojos, Baja California, Mexico. Surveys were conducted, in cooperation with fishery managers and members of the local fishing coopertives (or cooperativos) off Punta San Jose (near Ensenada) and around Isla Natividad. 
+
+Following the First Binational Abalone Symposium hosted by CICESE in Ensenada, Baja California, renewed cooperation/enthusiasm... 
+
+In 2017, funding was received from the NMFS Office of Scientific and Technology International Research Program, the NMFS Office of Protected Resources, and the WCRO (\$85K, total) to conduct new surveys in cooperation with local fishermen and fishery scientists in high-probability white abalone habitats to provide critical information on the status of white abalone populations in Mexico, and to help them develop methods and monitoring programs for white abalone. 
+
+#### Improving assessments using advanced technology  
+**Design and development of visual survey tools**
+In 1999, a ROV (_Phantom 2+2_, Deep Ocean Engineering) was purchased to conduct visual surveys of white abalone and generate baseline population estimates soon after the species was listed as endangered under the ESA. The earliest configuration of this ROV was rated to a water depth of 500 m and had a standard definition video camera (NTSC, 520 x 480 lines of resolution), halogen lights, and four thrusters (two horizontal, two vert-trans). There was no means of tracking the location of the ROV from the ship, and no tether management. Over time, the ROV hull was upgraded to a _Phantom DS4_ (2001), which added two horizontal thrusters and increased the depth rating. Furthermore, additional cameras and sensors were added to improve the quality and quantity of data and imagery collected during surveys including: a high-resolution (3 megapixel) digital still camera (2003; Scorpio Plus, Insite Pacific) and strobes; calibrated, high-intensity lasers for estimating the size and range of targets observed near the seabed; a Doppler velocity log (2005; 1200 kHz Workhourse Navigator, Teledyne) for precise estimation of speed, distance, and altitude; a conductivity-temperature-depth (2006; Citadel CTD, RDI Teledyne) probe and oxygen optode (Model 3975, Aanderaa); an ultrashort baseline acoustic tracking system (2002; TrackPoint-IIplus, ORE Offshore); and a forward-looking scanning sonar (2005; MS1000, Kongsberg-Simrad). In 2010, a more precise and user-friendly USBL (TrackLink 1500HA, LinkQuest) was added.
+
+In 2011, the engineers and biologists at the SWFSC finalized the design and construction of a new high-definition (HD), high-voltage, DC-powered ROV ([HDHV-ROV](https://swfsc.noaa.gov/hdhv-rov/)) to improve the survey capabilities of the ROV program. The HDHV-ROV incorporated many of the instruments from the _Phantom DS4_ ROV, and added: an HD (1080i) color video camera (Mini Zeus, Insite Pacific); LED lighting (LED Multi-SeaLite, Deep Sea Power & Light); a fiber-optic umbilical to increase bandwith for video and data transmission; and brushless DC trusters, which greatly reduced noise and eliminated laborious maintenance required by the _Phantom_ trusters. In 2016, a calibrated stereo camera pair was installed to improve the measurement of targets observed during the surveys, and a multibeam imaging sonar (M3, Kongsberg-Simrad) was added to aid navigation, provide high-resolution maps of the seabed, or both. We continue to explore ways in which the survey capabilities of the SWFSC ROV can be improved.
+
+**Improving visual survey methods**  
+Accurate and precise measurements of transect length and width are critical to the estimation of abalone density and abundance. In 2016, a study was conducted to examine the accuracy and precision of distance estimates derived from different ROV instruments, and described a practical method to estimate transect width throughout surveys using standard survey equipment and analysital methods [@Stierhoff2016]. That study found that transect distance measured using a Doppler velocity log were precise and accurate (**precision, accuracy**), and that transect area measured using the optical properties and orientation of the video camera were comparable to estimates derived using more laborious image analysis techniques. These methods significantly streamline and improve estimates of area searched during optical transect surveys, and will be employed during future surveys of abalone and other demersal fishes.  
+
+#### Improving assessments through habitat modeling  
+_Initially, ROVs were used to survey white abalone populations in areas where historical landings were greatest (e.g., San Clemente Island, Tanner and Cortes Banks, and Santa Catalina Island). More recently, surveys have been conducted in areas where high-resolution multibeam bathymetric data exist and survey-based densities and abundances were greatest (i.e., Tanner Bank, and to a lesser extent San Clemente Island), and survey effort is typically focused on areas deemed potential white abalone habitat. Based on the results of Butler et al. (2006), potential habitat is broadly defined as rocky substrate between the depths of 30 to 60 m. However, other factors, including rugosity, slope, and geologic composition, likely determine whether some habitats are more optimal than others._
+
+_I will identify suitable habitat in the Southern California Bight to inform future outplanting efforts of White Abalone. Given that this population exists at such low numbers and data is limited to presence-only (lacking or unreliable absence data), maximum entropy (Maxent) models are strong candidates for modeling habitat suitability (Phillips et al 2006). Using White Abalone survey data (SWFSC ROV and SCUBA surveys, California Department of Fish and Wildlife (CDFW), citizen science, etc.) as well as potential environmental factors of suitable habitat, I will develop a Maxent model to inform White Abalone outplanting efforts. To the extent possible, I will evaluate the effects of climate change on the designated suitable habitats to predict long-term suitability._
+
+## Research theme 2 - SCUBA operations  
+_To date, population assessment surveys have been limited to deep-water populations using ROVs. However, surveys of nearshore habitats by NOAA researchers and citizen scientist groups are identifying white abalone in areas where they were thought to be extirpated or at very low density. Heavy surge and dense kelp are often inaccessible or unsafe for using ROVs. Therefore, the SWFSC and its partners will increasingly use open-circuit SCUBA, closed-circuit rebreathers, or both to survey white abalone in shallow-nearshore areas where ROV surveys are impractical or impossible._
+
+_SCUBA surveys have several advantages over ROV surveys. First, measurements of shell length and nearest neighbor distances (which is important for estimating group size and for identifying reproductively isolated individuals) are more accurate than those from ROVs. Furthermore, SCUBA divers have the potential to collect biological samples for genetic analysis and disease monitoring (see Theme 3 below), which is not possible using ROVs._  
+
+### Research foci for Theme 2  
+#### Demography of shallow-water populations  
+
+#### Brood stock collection  
+_The collection of additional brood stock to enhance captive breeding efforts will be an essential part of a successful stock enhancement program. While collection of adult individuals is not possible using the ROV, it may be used to search for and identify white abalone in deep-water habitats where searching for abalone using SCUBA is impractical. Once individuals are identified with the ROV, directed SCUBA surveys (either open-circuit SCUBA or closed-circuit rebreathers) may be conducted to estimate nearest neighbor distances (a metric used to identify reproductively isolated individuals) and collect white abalone that are deemed to be singletons (see **Theme X** below)._  
+
+#### Behavioral studies using acoustic telemetry 
+
+\newpage  
+
+# Funding sources  
+## Discretionary NOAA funds  
+In 2000, soon after white abalone were listed as endangered under the ESA, the SWFSC received ~\$200K to purchase an ROV (_Phantom_, Deep Ocean Engineering) for surveying deep-water white abalone populations throughout southern CA. Since then, the SWFSC has received between \$15K-80K per year from West Coast Regional Office (WCRO, formerly the Southwest Regional Office) to support the costs of conducting field surveys, and improvements and repairs to the ROV system. These were typically discretionary funds and, therefore, the frequency and amount of funding were variable and unknown, and sometimes no funding was received. Nonetheless, the SWFSC was able to conduct meaningful surveys to monitor changes in white abalone populations at historically important locations every 2-4 years, an interval that is likely adequate to detect and track changes in population size. However, the level of funding received from the WCRO was not sufficient to survey all of the historically important sites, and the amount of survey effort (i.e., number of sea days) possible with the available funding was likely not optimal to minimize error in population estimates.    
+
+## Interagency Agreements  
+Given the limited amount of funding generally available, and the need to focus survey efforts at Tanner Bank, few surveys had been conducted at other historically significant areas, including San Clemente Island (SCI). In 2012, the SWFSC and WCRO entered into an interagency agreement with the Navy to conduct the first population assessment surveys of white abalone along the western shore of SCI since it was originally surveyed in 2004 (**Table: MIPR Funds**). In 2015, a second agreement provided funding to provide updated population estimates, but also for various projects aimed at improving survey methods and gaining a better understand of the behavior of white abalone and other abalone species that occur in the U.S. Navy's operational areas around San Clemente Island and Point Loma near San Diego, CA. All interagency agreements aimed to support the Navy's Integrated Natural Resources Management Plan for SCI and the State of CA's Abalone Recovery and Management Plan (ARMP).  
+
+**Table: MIPR Funds.** Funding year, amount (\$), and agreement number for agreements between the Navy and NOAA.  
+
+```{r MIPRfunds}
+mipr.funds <- read.csv("../Data/MIPR_funds.csv")
+kable(mipr.funds)
+```
+
+## US Navy/NOAA Memorandum of Agreement  
+IN 2016, the Navy and NOAA entered into a Memorandum of Agreement (MOA) where the Navy would provide financial support for the recovery of critically endangered white abalone populations that occur at Tanner and Cortes Banks in exchange for the ability to continue conducting at-sea testing and training within the Navy's irreplaceable and strategically significant Southern California (SOCAL) Range Complex that are compatible with the recovery of the species (also called the Seven-Year Plan). The MOA will provide a total of ~\$2,175,000 over the course of the Seven-Year Plan in support of efforts to monitor demography; improve survey methodology; develop methods to monitor behavior, disease prevalence, genetic diversity, demography; and monitor habitats and assess outplant sites (**Table: Navy Funds**). Approximately \$1,495,000 of funding is allocated to ROV operations to survey white abalone populations and their offshore habitats at San Clemente Island, Tanner Bank, and Cortes Bank, and to explore and characterize and monitor potential outplant sites in nearshore habitats. Approximately ~\$200,000 is allocated to the development and refinement of advanced technology (e.g., acoustic telemetry and time-lapse videography) for studying the movement and behavior white abalone and other closely related surrogate species. Total funding in any one year ranges from ~\$118K-545K/year.  
+
+\newpage
+\blandscape
+
+```{r NavyFunding,fig.width=6}
+# insert image if Word or HTML output
+if(doc.type == "docx" | doc.type == "html"){
+# read image file and print result
+img <- readPNG("../Figs/fig_navy_funding_2016_2022.png")
+grid::grid.raster(img)
+}
+``` 
+
+\begin{center}
+\includegraphics[width = 9 in]{../Figs/fig_navy_funding_2016_2022.png}
+\end{center}
+
+**Table: Navy Funds.** Funding allocation by year and research theme for the US Navy/NOAA Memorandum of Agreement and Seven-Year Plan.
+
+\elandscape
+\newpage  
+
+# 5-year Research Plan  
+
+# Personnel  
+## SWFSC Staff  
+Kevin Stierhoff, Ph.D. (Research Fisheries Biologist, ROV Team Lead), David Murfin (Electrical engineer), Scott Mau (Research Fisheries Biologist)  
+
+## Partner institution staff  
+### West Coast Regional Office  
+Melissa Neuman, Ph.D. (**Title**)
+
+### Restoration Center  
+David Witting, Ph.D. (**Title**)  
+
+### Scripps Institution of Oceaongraphy  
+Brice Semmens, Ph.D. (Professor), Jordan Dinardo (Graduate student)
+
+### Others  
+Paua Research Group  
+William Hagy  
+
+
+
+\newpage  
+
+# Appendices  
+
+\newpage  
+
+# Literature cited
+
