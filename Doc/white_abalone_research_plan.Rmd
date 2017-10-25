@@ -9,32 +9,32 @@ output:
   html_document:
     toc: yes
   word_document:
-    reference_docx: //swc-storage1/ast1/LITERATURE/Rmarkdown/template/report_template_Rmarkdown.docx
+    reference_docx: template/report_template_Rmarkdown.docx
     toc: yes
 header-includes:
 - \usepackage{pdflscape}
 - \newcommand{\blandscape}{\begin{landscape}}
 - \newcommand{\elandscape}{\end{landscape}}
-csl: //swc-storage1/ast1/LITERATURE/Rmarkdown/csl/ices-journal-of-marine-science.csl
-bibliography: D:/DOCUMENTS/BibTeX/stierhoff_abalone.bib
+csl: csl/ices-journal-of-marine-science.csl
+bibliography: D:/DOCUMENTS/BibTeX/library.bib
 ---
 
 ```{r Setup,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
-rm(list=ls())
+rm(list = ls())
 # List packages required to run the script
-pkgs <- c("cowplot","devtools","RODBC","png","knitr","tidyverse")
+pkgs <- c("cowplot","devtools","RODBC","png","knitr","tidyverse","huxtable")
 
 # Install and load all CRAN packages provided from a character vector
 load_pkgs = function(pkgs){
   new_pkgs = pkgs[!(pkgs %in% installed.packages()[ ,'Package'])]
-  if(length(new_pkgs) > 0) install.packages(new_pkgs)
+  if (length(new_pkgs) > 0) install.packages(new_pkgs)
   invisible(lapply(pkgs,function(x)
-    suppressPackageStartupMessages(library(x,character.only=TRUE))))
+    suppressPackageStartupMessages(library(x,character.only = TRUE))))
 }
 # Load packages
 load_pkgs(pkgs)
 # Install and load surveyR package from github
-if("surveyR" %in% installed.packages()[ ,'Package'] == FALSE){
+if ("surveyR" %in% installed.packages()[ ,'Package'] == FALSE) {
   install_github("kstierhoff/surveyR")
 }
 # Load surveyR package
@@ -42,17 +42,17 @@ library(surveyR)
 # set system time zone to GMT
 Sys.setenv(tz = "GMT")
 # determines method of table generation (whether kable or xtable) for best formatting
-doc.type <-knitr::opts_knit$get('rmarkdown.pandoc.to')
-if(is.null(doc.type)){doc.type <- 'docx'}
+doc.type <- knitr::opts_knit$get('rmarkdown.pandoc.to')
+if (is.null(doc.type)) {doc.type <- 'docx'}
 
 # global knitr chunk options
-knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,dev="png",dev.args=list(type="cairo"),dpi=150)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,dev = "png",dev.args = list(type = "cairo"),dpi = 150)
 # User options
 get.db <- FALSE
 ```  
 
 ```{r ImportTrawlData}
-if (get.db == TRUE){
+if (get.db == TRUE) {
   # Configure ODBC connection to TRAWL database
     channel <- odbcConnect(dsn = 'ROV2')
     # Import trawl database tables
@@ -74,15 +74,15 @@ if (get.db == TRUE){
     
     # Filter and merge data
     logs <- logs %>% filter(dive_type == "AB",for_analysis == 1) %>% 
-      mutate(year = as.numeric(format(dive_date,format="%Y")))
-    nav  <- nav  %>% inner_join(dplyr::select(logs,dive_name,site_general,site_specific,rov_code),by="dive_name")
+      mutate(year = as.numeric(format(dive_date,format = "%Y")))
+    nav  <- nav  %>% inner_join(dplyr::select(logs,dive_name,site_general,site_specific,rov_code),by = "dive_name")
     photo.info <- photo.info %>% inner_join(dplyr::select(logs,dive_name,rov_code,site_general,site_specific))
     photo.obs <- photo.obs %>% 
       inner_join(dplyr::select(spp.info,species_code,sci_name,sci_name_full,common_name)) %>% 
-      inner_join(dplyr::select(photo.info,-comment),by="photo_id") 
+      inner_join(dplyr::select(photo.info,-comment),by = "photo_id") 
     
     # Save imported database data to .Rdata file
-    save(logs,nav,events,lengths,photo.info,photo.obs,spp.info,file="../Data/ROV_data.Rdata")
+    save(logs,nav,events,lengths,photo.info,photo.obs,spp.info,file = "../Data/ROV_data.Rdata")
   } else {
   # Load previously imported database data
   load("../Data/ROV_data.Rdata")
@@ -109,7 +109,15 @@ if (get.db == TRUE){
 
 # National priorities for white abalone research  
 ## White Abalone Recovery Plan  
-In 2008, NOAA finalized the White Abalone Recovery Plan [hereafter, Recovery Plan; @Service2008]
+In 2008, NOAA finalized the White Abalone Recovery Plan [hereafter, Recovery Plan; @NationalMarineFisheriesService2008]. That document describes the status of the species, goals for recovery throughout its range, and the recommendd strategy to achieve recovery, including:  
+
+1. **Assess and monitor subpopulations of white abalone in the wild in cooperation with the state of California, other federal agencies, private organizations and the Mexican government**,
+2. **Identify and characterize existing and potential white abalone habitat through acoustic remote sensing technology**,
+3. Protect white abalone populations and their habitat in the wild,
+4. Continue and expand a captive propagation and enhancement program for white abalone in California, and
+5. Develop enforcement, public outreach and education plans. 6. Secure financial support for white abalone recovery.
+
+Of those, the Advanced Survey Technologies (AST) Group (and formerly the Benthic Resources Group) at the SWFSC and its partners have been contributing primarily to Items 1 and 2 using visual and acoustic surveys. Recently, members of AST have contributed to Item 4 by using technical SCUBA diving expertise to collect isolated white abalone in deep-water habitats to augment the brood stock used for captive breeding by the Genetics, Physiology, and Aquaculture Group at the SWFSC and its partner institutions throughout CA.   
 
 ## Species in the Spotlight  
 NOAA's [Species in the Spotlight](http://www.nmfs.noaa.gov/stories/2015/05/05_14_15species_in_the_spotlight.html) initiative is part of a strategy to marshal resources on species listed under the Endangered Species Act of 1973 (ESA) for which immediate, targeted efforts are vital for stabilizing their populations and preventing their extinction. Eight species were identified by the National Marine Fisheries Service (NMFS) as among the most at-risk of extinction, including [white abalone](http://www.nmfs.noaa.gov/stories/2015/08/spotlight_whiteabalone.html).
@@ -117,8 +125,6 @@ NOAA's [Species in the Spotlight](http://www.nmfs.noaa.gov/stories/2015/05/05_14
 These species were identified as most at-risk of extinction based on three criteria (1) endangered listing, (2) declining populations, and (3) are considered a recovery priority #1[^1] . We know the threats facing these species and understand the management actions we can take that will have a high probability of success. The [5-Year Action Plan actions](http://www.nmfs.noaa.gov/stories/2016/02/docs/white__abalone_spotlight_species_5_year_action_plan_final_web.pdf) builds upon existing recovery or conservation plans and details the focused efforts needed over the next 5 years to reduce threats and stabilize population declines. We will engage our partners in the public and private sectors in actions they can take to support this important effort. We will report on our progress through the Biennial Report to Congress and post updates on our [website](http://www.nmfs.noaa.gov/pr/). This strategy will guide agency actions where we have the discretion to make critical investments to safeguard these most endangered species. The strategy will not divert resources away from the important and continued efforts to support all ESA-listed species under our authority. Many of our species have long-standing conservation programs supported by multiple partners. We remain committed to those programs. This action plan is designed to highlight the actions that can be taken by us, other federal and state resource agencies, environmental organizations, Native American Tribes and other partners to turn the trend around for this species from a declining trajectory to a trajectory towards recovery.  
 
 [^1]: Priority #1 is defined as a species whose extinction is almost certain in the immediate future because of a rapid population decline or habitat destruction, whose limiting factors and threats are well understood and the needed management actions are known and have a high probability of success, and is a species that is in conflict with construction or other developmental projects or other forms of economic activity. NMFS Endangered and Threatened Listing Recovery Guidelines (55 FR 24296, June 15, 1990).  
-
-\newpage  
 
 # Role of the Southwest Fisheries Science Center  
 
@@ -131,7 +137,7 @@ The Recovery Plan identifies several critical actions to aid the recovery of thi
 ### Research foci for Theme 1  
 #### Demography of deep-water populations in historically imporant areas  
 
-The SWFSC and its partners have used ROVs to survey white abalone at a number of historically important locations throughout the Southern California Bight (SCB) since 2000 (**Table: Survey site summary **). Monitoring effort has been greatest at Tanner Bank, San Clemente Island, Santa Catalina Island, and Cortes Banks and has produced estimates of population size, size distribution, and seabed habitat at those sites [@Butler2006;@Stierhoff2012a;@Stierhoff2014;@Stierhoff2014a]. Monitoring has focused primarily on the white abalone population Tanner Bank, which had the greatest density and largest estimated population size based on early surveys [@Butler2006], and at San Clemente Island where commercial landings were greatest [@Hobday2000;@Hobday2001].  
+The SWFSC and its partners have used ROVs to survey white abalone at a number of historically important locations throughout the Southern California Bight (SCB) since 2000 (**Table: Survey site summary **). Monitoring effort has been greatest at Tanner Bank, San Clemente Island, Santa Catalina Island, and Cortes Banks and has produced estimates of population size, size distribution, and seabed habitat at those sites [@Butler2006;@Stierhoff2012b;@Stierhoff2014;@Stierhoff2014a]. Monitoring has focused primarily on the white abalone population Tanner Bank, which had the greatest density and largest estimated population size based on early surveys [@Butler2006], and at San Clemente Island where commercial landings were greatest [@Hobday2000;@Hobday2001].  
 
 **Table: Survey site summary.** A summary of remotely operated vehicle survey effort by site and year.
 
@@ -139,13 +145,13 @@ The SWFSC and its partners have used ROVs to survey white abalone at a number of
 site.summ.all <- logs %>% 
   group_by(site_general) %>% 
   summarise(dives = length(dive_id),
-            years = glue::collapse(unique(year),sep=", ")) %>% 
+            years = glue::collapse(unique(year),sep = ", ")) %>% 
   arrange(desc(dives))
 names(site.summ.all) <- c("Survey site","Dives","Years")
 kable(site.summ.all)
 ```
 
-In 2002, bathymetric mapping was conducted at Tanner Bank, Cortes Bank, San Clemente Island, and Farnsworth Bank (off the coast of Santa Catalina Island) using a multibeam sonar to identify areas of rocky substrate and quantify the amount of potentially available white abalone habitat (**Figure: White Abalone Habitats**). Next, depth-stratified visual transect surveys were conducted using an ROV at each location to estimate white abalone density, abundance, and size structure. The results from surveys in 2002 and 2004 provided a “baseline” estimate of available habitat, abundance, and size structure of the populations in these areas. Subsequent visual surveys conducted at Tanner Bank in 2008 and 2010 indicated that the population at that site had declined by approximately 78% since 2002 despite protection under ESA [@Stierhoff2012]. Data from the most recent survey conducted at Tanner Bank and Cortes Bank in 2014 are still being analyzed, but preliminary results indicate the the population at those two sites remain severely depleted (K. Stierhoff, unpublished data). The majority of white abalone observed at Tanner Bank have been solitary (> 2 m nearest neighbor distance), large (> 9 cm), and the mean length in each survey has increased over time, which suggests an aging population of mostly isolated individuals with little or no indication of recent recruitment. A survey at San Clemente Island in 2012 suggested a small but stable remnant population [@Stierhoff2014], but the extremely low density at that site resulted in population estimates with high uncertainty. Another survey at San Clemente Island in 2015 observed only two white abalone in 36 transects, and suggested a decrease in abundance at that site (K. Stierhoff, unpublished data), but the large error around the abundance estimates makes the interpretation of population trends difficult.  
+In 2002, bathymetric mapping was conducted at Tanner Bank, Cortes Bank, San Clemente Island, and Farnsworth Bank (off the coast of Santa Catalina Island) using a multibeam sonar to identify areas of rocky substrate and quantify the amount of potentially available white abalone habitat (**Figure: White Abalone Habitats**). Next, depth-stratified visual transect surveys were conducted using an ROV at each location to estimate white abalone density, abundance, and size structure. The results from surveys in 2002 and 2004 provided a “baseline” estimate of available habitat, abundance, and size structure of the populations in these areas. Subsequent visual surveys conducted at Tanner Bank in 2008 and 2010 indicated that the population at that site had declined by approximately 78% since 2002 despite protection under ESA [@Stierhoff2012b]. Data from the most recent survey conducted at Tanner Bank and Cortes Bank in 2014 are still being analyzed, but preliminary results indicate the the population at those two sites remain severely depleted (K. Stierhoff, unpublished data). The majority of white abalone observed at Tanner Bank have been solitary (> 2 m nearest neighbor distance), large (> 9 cm), and the mean length in each survey has increased over time, which suggests an aging population of mostly isolated individuals with little or no indication of recent recruitment. A survey at San Clemente Island in 2012 suggested a small but stable remnant population [@Stierhoff2014], but the extremely low density at that site resulted in population estimates with high uncertainty. Another survey at San Clemente Island in 2015 observed only two white abalone in 36 transects, and suggested a decrease in abundance at that site (K. Stierhoff, unpublished data), but the large error around the abundance estimates makes the interpretation of population trends difficult.  
 
 #### Exporatory surveys in other potentially viable deep-water habitats  
 In addition to the more intensive sampling conducted at the long-term monitoring sites, smaller-scale surveys have been conducted at some areas where white abalone have been observed or are thought to occur (**Table: Survey site summary**). In 2008, five visual transect surveys were conducted at Farnsworth Bank, but only one white abalone was observed. In 2015, 20 visual transect surveys were conducted at two sites near Palos Verdes, CA (“The Ridges” and “Horseshoe Kelp”). These two sites are relatively shallow (approximately 20-40 m), have been surveyed by numerous groups using SCUBA, and are known to be habitat for white and pinto abalone (_H. kamtschatkana_). During that survey, three white abalone were observed and 29 pinto abalone. 
@@ -186,7 +192,12 @@ _The collection of additional brood stock to enhance captive breeding efforts wi
 \newpage  
 
 # Funding sources  
-## Discretionary NOAA funds  
+## Discretionary NOAA funds
+```{r WCROfunds}
+wcro.funds <- read_csv("../Data/WCRO_funds.csv")
+kable(wcro.funds)
+```
+
 In 2000, soon after white abalone were listed as endangered under the ESA, the SWFSC received ~\$200K to purchase an ROV (_Phantom_, Deep Ocean Engineering) for surveying deep-water white abalone populations throughout southern CA. Since then, the SWFSC has received between \$15K-80K per year from West Coast Regional Office (WCRO, formerly the Southwest Regional Office) to support the costs of conducting field surveys, and improvements and repairs to the ROV system. These were typically discretionary funds and, therefore, the frequency and amount of funding were variable and unknown, and sometimes no funding was received. Nonetheless, the SWFSC was able to conduct meaningful surveys to monitor changes in white abalone populations at historically important locations every 2-4 years, an interval that is likely adequate to detect and track changes in population size. However, the level of funding received from the WCRO was not sufficient to survey all of the historically important sites, and the amount of survey effort (i.e., number of sea days) possible with the available funding was likely not optimal to minimize error in population estimates.    
 
 ## Interagency Agreements  
@@ -195,7 +206,7 @@ Given the limited amount of funding generally available, and the need to focus s
 **Table: MIPR Funds.** Funding year, amount (\$), and agreement number for agreements between the Navy and NOAA.  
 
 ```{r MIPRfunds}
-mipr.funds <- read.csv("../Data/MIPR_funds.csv")
+mipr.funds <- read_csv("../Data/MIPR_funds.csv")
 kable(mipr.funds)
 ```
 
@@ -207,7 +218,7 @@ IN 2016, the Navy and NOAA entered into a Memorandum of Agreement (MOA) where th
 
 ```{r NavyFunding,fig.width=6}
 # insert image if Word or HTML output
-if(doc.type == "docx" | doc.type == "html"){
+if (doc.type == "docx" | doc.type == "html") {0
 # read image file and print result
 img <- readPNG("../Figs/fig_navy_funding_2016_2022.png")
 grid::grid.raster(img)
