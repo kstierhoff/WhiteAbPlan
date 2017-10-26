@@ -99,17 +99,24 @@ if (get.db == TRUE) {
 **TBD**
 
 \newpage  
+# Introduction  
+This research plan describes the research activities to be undertaken by researchers in the Advanced Survey Technologies (AST) Group at NOAA's Southwest Fisheries Science Center as they pertain to the recovery of endangered white abalone (_Haliotis sorenseni_) throughout historic geographic range. Within NOAA, the AST Group has unique expertise and technological capabilities in the areas of underwater optics and acoustics that was developed, in part, to monitor white abalone populations at depths beyond which SCUBA and other methods were ineffective,  inefficient, or unsafe. **It provides an overview of the history of white abalone fisheries, the current status of their populations, threats to recovery, and ...**  
 
 # Background and purpose  
 ## Population status  
+White abalone were historically found between Point Conception, CA (USA) and Punta Abreojos, Baja California (Mexico). They are among the deepest occurring abalone species in California (5–50m depth), with major concentrations having occurred between 25 and 30 m [@Tegner1989]. White abalone are estimated to live up to 35 years [@Tutschulte1988], and their longevity has been validated to be as great as 27 years using bomb radiocarbon dating [@Andrews2013]. Like other abalone species, the recruitment of white abalone may be episodic [@McShane1996]. White abalone once supported a brief commercial fishery in North America, but by the mid-1980s, landings fell to near zero and the commercial fishery was closed in 1997 [@Hobday2001]. The white abalone fishery in Mexico appears to have collapsed in the 1960s [@Shepherd1998]. Despite fishery closures, white abalone abundance continued to decline through the 1990s and as a result, white abalone became the first marine invertebrate to be listed as endangered throughout its range under the Endangered Species Act (ESA) in 2001 [@NationalMarineFisheriesService2001]. A formal status review concluded that the species’ abundance was greatly reduced due to overharvesting during the 1970s and that remnant populations showed no sign of recovery following the closure of the fishery [@Hobday2000]. It is believed that no significant recruitment has occurred since the 1960s [@Davis1996; @Hobday2000] and that the substantial reduction in white abalone densities has contributed to this decrease in reproductive success through an Allee effect [@Allee1931;@Berec2007]. Limited information on movement patterns suggests that the more sedentary behavior of white abalone compared to green and pink abalone make it unlikely that recovery of locally extirpated or depleted populations could occur through immigration or aggregation, respectively [@Hobday2000;@Tutschulte1976]. Monitoring of wild white abalone has confirmed that populations continue to decline in some areas and that the wild population is at high risk of extinction [@Butler2006;@Stierhoff2012b;@Stierhoff2014]. Given the continued decline following protection, recent efforts have focused on the development and expansion of captive breeding programs by NMFS and its partner institutions to hopefully restore wild white abalone densities to levels that are self-sustaining.
 
 ## Threats  
+Loss and destruction of habitat, disease, predation, illegal harvest, and inadequate enforcement are all potential threats and impediments to white abalone recovery. However, the White Abalone Recovery Plan [hereafter, Recovery Plan; @NationalMarineFisheriesService2008] states that the most significant threat to white abalone recovery relates to the residual effects low population density on their continued reproduction and survival.
 
 ## Recovery  
+Even if limited natural recruitment of white abalone is occurring, it is happening too slowly to give the species the foothold it needs to weather future threats and be viable over the long-term. The best way to safeguard white abalone against extinction is a captive breeding program aiming to produce young abalone. These captive-raised animals can enhance wild populations to the point that densities are boosted enough to sustain healthy and prolific populations. This enhancement may occur as a variety of approaches aimed at increasing abundance and reproductive success of white abalone in the wild by placement of these captive bred individuals (outplanting) in currently unoccupied areas or groups of wild abalone and captive bred abalone. Continued monitoring of wild white abalone and their habitat must occur at the same time as captive breeding in order to identify habitats best-suited for future enhancement efforts and to track species’ status over time.  
+
+The White Abalone Recovery Plan aims to ensure the recovery of the white abalone population throughout its range (in both the US and Mexico), defined as the establishment of self-sustaining populations based on threshold densities, minimum population size, size frequency distributions, population trends, and spatial distribution [see details in @NationalMarineFisheriesService2008]. It is important to note that this definition of white abalone recovery may not necessarily support a fishery.  
 
 # National priorities for white abalone research  
 ## White Abalone Recovery Plan  
-In 2008, NOAA finalized the White Abalone Recovery Plan [hereafter, Recovery Plan; @NationalMarineFisheriesService2008]. That document describes the status of the species, goals for recovery throughout its range, and the recommendd strategy to achieve recovery, including:  
+In 2008, NOAA finalized the Recovery Plan [@NationalMarineFisheriesService2008]. That document describes the status of the species, goals for recovery throughout its range, and the recommendd strategy to achieve recovery, including:  
 
 1. **Assess and monitor subpopulations of white abalone in the wild in cooperation with the state of California, other federal agencies, private organizations and the Mexican government**,
 2. **Identify and characterize existing and potential white abalone habitat through acoustic remote sensing technology**,
@@ -126,11 +133,14 @@ These species were identified as most at-risk of extinction based on three crite
 
 [^1]: Priority #1 is defined as a species whose extinction is almost certain in the immediate future because of a rapid population decline or habitat destruction, whose limiting factors and threats are well understood and the needed management actions are known and have a high probability of success, and is a species that is in conflict with construction or other developmental projects or other forms of economic activity. NMFS Endangered and Threatened Listing Recovery Guidelines (55 FR 24296, June 15, 1990).  
 
-# Role of the Southwest Fisheries Science Center  
+# Southwest Fisheries Science Center Priorities  
+The FY18 Strategic Plan outlined by the SWFSC places a high priority on research related to white abalone habitat and population assessment; captive breeding and stock enhancement; and overall recovery of this ESA-listed species in collaboration with various outside agencies including the US Navy, CICESE, and academic partners. This emphasis is in-part due to the selection of white abalone as one of eight Species in the Spotlight.
 
 \newpage  
 
-# Research themes
+# Research themes  
+**OVERVIEW OF OF RESEARCH THEMES**
+
 ## Research theme 1 - Remotely operated vehicle operations  
 The Recovery Plan identifies several critical actions to aid the recovery of this endangered species, two of which have been research foci since 2001: 1) assess and monitor wild subpopulations in cooperation with state, Federal, and international partners; 2) identify and characterize existing and potential white abalone habitat. White abalone have the deepest depth distribution of all abalone species in California [@Leighton2000] **(Hobday, others)**, occurring at the highest density between 30 and 60 m. The deep distribution of white abalone habitat poses logistical challenges to sampling using traditional visual survey methods such as SCUBA, which is constrained by depth and bottom-time restrictions. For this reason, remote sensing technologies, primarily remotely operated vehicles (ROVs) and active acoustic sensors, have been developed and/or used by scientists at the SWFSC and their partners to conduct this research.  
 
@@ -151,7 +161,7 @@ names(site.summ.all) <- c("Survey site","Dives","Years")
 kable(site.summ.all)
 ```
 
-In 2002, bathymetric mapping was conducted at Tanner Bank, Cortes Bank, San Clemente Island, and Farnsworth Bank (off the coast of Santa Catalina Island) using a multibeam sonar to identify areas of rocky substrate and quantify the amount of potentially available white abalone habitat (**Figure: White Abalone Habitats**). Next, depth-stratified visual transect surveys were conducted using an ROV at each location to estimate white abalone density, abundance, and size structure. The results from surveys in 2002 and 2004 provided a “baseline” estimate of available habitat, abundance, and size structure of the populations in these areas. Subsequent visual surveys conducted at Tanner Bank in 2008 and 2010 indicated that the population at that site had declined by approximately 78% since 2002 despite protection under ESA [@Stierhoff2012b]. Data from the most recent survey conducted at Tanner Bank and Cortes Bank in 2014 are still being analyzed, but preliminary results indicate the the population at those two sites remain severely depleted (K. Stierhoff, unpublished data). The majority of white abalone observed at Tanner Bank have been solitary (> 2 m nearest neighbor distance), large (> 9 cm), and the mean length in each survey has increased over time, which suggests an aging population of mostly isolated individuals with little or no indication of recent recruitment. A survey at San Clemente Island in 2012 suggested a small but stable remnant population [@Stierhoff2014], but the extremely low density at that site resulted in population estimates with high uncertainty. Another survey at San Clemente Island in 2015 observed only two white abalone in 36 transects, and suggested a decrease in abundance at that site (K. Stierhoff, unpublished data), but the large error around the abundance estimates makes the interpretation of population trends difficult.  
+In 2002, bathymetric mapping was conducted at Tanner Bank, Cortes Bank, San Clemente Island, and Farnsworth Bank (off the coast of Santa Catalina Island) using a multibeam sonar to identify areas of rocky substrate and quantify the amount of potentially available white abalone habitat (**Figure: White Abalone Habitats**). Next, depth-stratified visual transect surveys were conducted using an ROV at each location to estimate white abalone density, abundance, and size structure. The results from surveys in 2002 and 2004 provided a “baseline” estimate of available habitat, abundance, and size structure of the populations in these areas. Subsequent visual surveys conducted at Tanner Bank in 2008 and 2010 indicated that the population at that site had declined by approximately 78% since 2002 despite protection under ESA [@Stierhoff2012b]. Data from the most recent survey conducted at Tanner Bank and Cortes Bank in 2014 are still being analyzed, but preliminary results indicate the the population at those two sites remain severely depleted (K. Stierhoff, unpublished data). The majority of white abalone observed at Tanner Bank have been singletons (i.e., solitary, reproductively isolated individuals with > 2 m nearest neighbor distance), large (> 9 cm), and the mean length in each survey has increased over time, which suggests an aging population of mostly isolated individuals with little or no indication of recent recruitment. A survey at San Clemente Island in 2012 suggested a small but stable remnant population [@Stierhoff2014], but the extremely low density at that site resulted in population estimates with high uncertainty. A subsequent survey at San Clemente Island in 2015 observed only two white abalone in 36 transects [@Neuman2017]. The low numbers of observations resulted in estimates of population size that are too imprecise for statistical comparisons to results from the 2004 or 2012 survey.  
 
 #### Exporatory surveys in other potentially viable deep-water habitats  
 In addition to the more intensive sampling conducted at the long-term monitoring sites, smaller-scale surveys have been conducted at some areas where white abalone have been observed or are thought to occur (**Table: Survey site summary**). In 2008, five visual transect surveys were conducted at Farnsworth Bank, but only one white abalone was observed. In 2015, 20 visual transect surveys were conducted at two sites near Palos Verdes, CA (“The Ridges” and “Horseshoe Kelp”). These two sites are relatively shallow (approximately 20-40 m), have been surveyed by numerous groups using SCUBA, and are known to be habitat for white and pinto abalone (_H. kamtschatkana_). During that survey, three white abalone were observed and 29 pinto abalone. 
@@ -192,26 +202,31 @@ _The collection of additional brood stock to enhance captive breeding efforts wi
 \newpage  
 
 # Funding sources  
-## Discretionary NOAA funds
+## Discretionary NOAA Funding
+In 2000, soon after white abalone were listed as endangered under the ESA, the SWFSC received ~\$200K to purchase an ROV (_Phantom_, Deep Ocean Engineering) for surveying deep-water white abalone populations throughout southern CA. Since then, the SWFSC has mostly relied upon the West Coast Regional Office (WCRO, formerly the Southwest Regional Office) to support the costs of conducting field surveys, and improvements and repairs to the ROV system. These were discretionary funds and, therefore, the frequency and amount of funding were variable (between \$15K-80K per year) and unpredictable, and in some years no funding was received (**Table: Discretionary NOAA Funding**). Nonetheless, the SWFSC was able to conduct meaningful surveys to monitor changes in white abalone populations at historically important locations every 2-4 years, an interval that is likely adequate to detect and track changes in population size. However, the level of funding received from the WCRO was not sufficient to survey all of the historically important sites, and the amount of survey effort (i.e., number of sea days) possible with the available funding was likely not optimal to minimize error in population estimates.  
+
+**Table: Discretionary NOAA Funding**
+
 ```{r WCROfunds}
 wcro.funds <- read_csv("../Data/WCRO_funds.csv")
 kable(wcro.funds)
-```
-
-In 2000, soon after white abalone were listed as endangered under the ESA, the SWFSC received ~\$200K to purchase an ROV (_Phantom_, Deep Ocean Engineering) for surveying deep-water white abalone populations throughout southern CA. Since then, the SWFSC has received between \$15K-80K per year from West Coast Regional Office (WCRO, formerly the Southwest Regional Office) to support the costs of conducting field surveys, and improvements and repairs to the ROV system. These were typically discretionary funds and, therefore, the frequency and amount of funding were variable and unknown, and sometimes no funding was received. Nonetheless, the SWFSC was able to conduct meaningful surveys to monitor changes in white abalone populations at historically important locations every 2-4 years, an interval that is likely adequate to detect and track changes in population size. However, the level of funding received from the WCRO was not sufficient to survey all of the historically important sites, and the amount of survey effort (i.e., number of sea days) possible with the available funding was likely not optimal to minimize error in population estimates.    
+```  
 
 ## Interagency Agreements  
-Given the limited amount of funding generally available, and the need to focus survey efforts at Tanner Bank, few surveys had been conducted at other historically significant areas, including San Clemente Island (SCI). In 2012, the SWFSC and WCRO entered into an interagency agreement with the Navy to conduct the first population assessment surveys of white abalone along the western shore of SCI since it was originally surveyed in 2004 (**Table: MIPR Funds**). In 2015, a second agreement provided funding to provide updated population estimates, but also for various projects aimed at improving survey methods and gaining a better understand of the behavior of white abalone and other abalone species that occur in the U.S. Navy's operational areas around San Clemente Island and Point Loma near San Diego, CA. All interagency agreements aimed to support the Navy's Integrated Natural Resources Management Plan for SCI and the State of CA's Abalone Recovery and Management Plan (ARMP).  
+Given the limited amount of funding generally available from internal sources, and the need to focus survey efforts at Tanner Bank, few surveys had been conducted at other historically significant areas, particularly San Clemente Island (SCI). In 2012, the SWFSC and WCRO entered into a military interdepartmental purchase request (MIPR) agreement with the Navy to conduct the first population assessment surveys of white abalone along the western shore of SCI since it was originally surveyed in 2004 (**Table: Interagency Agreement Funds**). In 2015, a second agreement provided funding to provide updated population estimates, but also for various projects aimed at improving survey methods and gaining a better understand of the behavior of white abalone and other abalone species that occur in the U.S. Navy's operational areas around San Clemente Island and Point Loma near San Diego, CA. All interagency agreements aimed to support the Navy's Integrated Natural Resources Management Plan for SCI and the State of CA's Abalone Recovery and Management Plan (ARMP).  
 
-**Table: MIPR Funds.** Funding year, amount (\$), and agreement number for agreements between the Navy and NOAA.  
+**Table: Interagency Agreement Funds.** Funding year, amount (\$), and agreement number for agreements between the Navy and NOAA.  
 
-```{r MIPRfunds}
+```{r MIPRfunds, fig.height=5, fig.width=5}
 mipr.funds <- read_csv("../Data/MIPR_funds.csv")
 kable(mipr.funds)
 ```
 
 ## US Navy/NOAA Memorandum of Agreement  
-IN 2016, the Navy and NOAA entered into a Memorandum of Agreement (MOA) where the Navy would provide financial support for the recovery of critically endangered white abalone populations that occur at Tanner and Cortes Banks in exchange for the ability to continue conducting at-sea testing and training within the Navy's irreplaceable and strategically significant Southern California (SOCAL) Range Complex that are compatible with the recovery of the species (also called the Seven-Year Plan). The MOA will provide a total of ~\$2,175,000 over the course of the Seven-Year Plan in support of efforts to monitor demography; improve survey methodology; develop methods to monitor behavior, disease prevalence, genetic diversity, demography; and monitor habitats and assess outplant sites (**Table: Navy Funds**). Approximately \$1,495,000 of funding is allocated to ROV operations to survey white abalone populations and their offshore habitats at San Clemente Island, Tanner Bank, and Cortes Bank, and to explore and characterize and monitor potential outplant sites in nearshore habitats. Approximately ~\$200,000 is allocated to the development and refinement of advanced technology (e.g., acoustic telemetry and time-lapse videography) for studying the movement and behavior white abalone and other closely related surrogate species. Total funding in any one year ranges from ~\$118K-545K/year.  
+In 2016, the Navy and NOAA entered into a Memorandum of Agreement (MOA) where the Navy would provide financial support for the recovery of critically endangered white abalone populations that occur at Tanner and Cortes Banks in exchange for the ability to continue conducting at-sea testing and training within the Navy's irreplaceable and strategically significant Southern California (SOCAL) Range Complex that are compatible with the recovery of the species (also called the Seven-Year Plan). The MOA will provide a total of ~\$2,175,000 over the course of the Seven-Year Plan in support of efforts to monitor demography; improve survey methodology; develop methods to monitor behavior, disease prevalence, genetic diversity, demography; and monitor habitats and assess outplant sites (**Table: Navy Funds**). Approximately \$1,495,000 of funding is allocated to ROV operations to survey white abalone populations and their offshore habitats at San Clemente Island, Tanner Bank, and Cortes Bank, and to explore and characterize and monitor potential outplant sites in nearshore habitats. Approximately ~\$200,000 is allocated to the development and refinement of advanced technology (e.g., acoustic telemetry and time-lapse videography) for studying the movement and behavior white abalone and other closely related surrogate species. Total funding in any one year ranges from ~\$118K-545K/year.  
+
+## Competitive NOAA Funding  
+In 2017, the SWFSC, WCRO, and RC received funding from the Office of Science and Technology's International Science Program (\$35K) to conduct a 10-d survey of white abalone and their habitats along the Pacific coast of Baja California, Mexico in collaboration with international colleagues from the Centro de Investigacion Científica y de Educación Superior de Ensenada (CICESE), the Comunidad and Biodiversidad (COBI), and local fishing cooperativos (to ensure industry support and participation). Additional funds (\$50K) were provided by the NOAA's Office of Protected Resources to complete the work. Nearly half of the white abalone's historic range lies in Mexican waters. This project aims to use ROVs, multibeam acoustics, and SCUBA to collect critical information on the demography, spatial ecology, and genetics of white abalone populations in Mexico, which have gone largely unstudied since being ESA-listed in 2001. 
 
 \newpage
 \blandscape
@@ -234,11 +249,22 @@ grid::grid.raster(img)
 \elandscape
 \newpage  
 
-# 5-year Research Plan  
+# 5-year Research Plan
+Since most funding is received on a fiscal year (FY) schedule, planning is described on a FY calendar.
+
+##FY2018
+
+##FY2019
+
+##FY2020
+
+##FY2021
+
+##FY2022
 
 # Personnel  
 ## SWFSC Staff  
-Kevin Stierhoff, Ph.D. (Research Fisheries Biologist, ROV Team Lead), David Murfin (Electrical engineer), Scott Mau (Research Fisheries Biologist)  
+Kevin Stierhoff, Ph.D. (Research Fisheries Biologist, ROV Team Lead; AST), David Murfin (Electrical engineer; AST), Scott Mau (Research Fisheries Biologist; AST)  
 
 ## Partner institution staff  
 ### West Coast Regional Office  
@@ -251,8 +277,7 @@ David Witting, Ph.D. (**Title**)
 Brice Semmens, Ph.D. (Professor), Jordan Dinardo (Graduate student)
 
 ### Others  
-Paua Research Group  
-William Hagy  
+Amanda Bird and Adam Obaza (Paua Research Group), William Hagy and Ronan Gray ()
 
 
 
