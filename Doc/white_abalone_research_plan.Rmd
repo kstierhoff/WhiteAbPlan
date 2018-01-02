@@ -23,8 +23,8 @@ bibliography: D:/DOCUMENTS/BibTeX/library.bib
 ```{r Setup,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
 rm(list = ls())
 # List packages required to run the script
-pkgs <- c("cowplot","devtools","RODBC","png","raster",
-          "knitr","tidyverse","huxtable","sf","maptools","sp")
+pkgs <- c("cowplot","devtools","RODBC","png","raster","flextable",
+          "knitr","tidyverse","sf","maptools","sp","kableExtra")
 
 # Install and load all CRAN packages provided from a character vector
 load_pkgs = function(pkgs){
@@ -46,6 +46,13 @@ Sys.setenv(tz = "GMT")
 # determines method of table generation (whether kable or xtable) for best formatting
 doc.type <- knitr::opts_knit$get('rmarkdown.pandoc.to')
 if (is.null(doc.type)) {doc.type <- 'docx'}
+
+# determine global knitr table format
+if (doc.type == "latex") {
+  knitr.format <- "latex"
+} else {
+  knitr.format <- "html" 
+}
 
 # global knitr chunk options
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,dev = "png",dev.args = list(type = "cairo"),dpi = 150)
@@ -153,7 +160,7 @@ Of the critical actions idenfitied in the Recovery Plan, two have been research 
 ### Research foci for Theme 1  
 #### Demography of deep-water populations in historically imporant areas  
 
-The SWFSC and its partners have used ROVs to survey white abalone at a number of historically important locations throughout the Southern California Bight (SCB) since 2000 (**Table 1, Figure 1**). Monitoring effort has been greatest at Tanner Bank, San Clemente Island, Santa Catalina Island, and Cortes Banks and has produced estimates of population size, size distribution, and seabed habitat at those sites [@Butler2006;@Stierhoff2012b;@Stierhoff2014;@Stierhoff2014a]. Monitoring has focused primarily on the white abalone population Tanner Bank, which had the greatest density and largest estimated population size based on early surveys [@Butler2006], and at San Clemente Island where commercial landings were historically greatest [@Hobday2000;@Hobday2001].  
+The SWFSC and its partners have used ROVs to survey white abalone at a number of historically important locations throughout the Southern California Bight (SCB) since 2000 (**Table 1, Figure 1**). Monitoring effort has been greatest at Tanner Bank, San Clemente Island, Santa Catalina Island, and Cortes Banks and has produced estimates of population size, size distribution, and seabed habitat at those sites [@Butler2006;@Stierhoff2012b;@Stierhoff2014]. Monitoring has focused primarily on the white abalone population Tanner Bank, which had the greatest density and largest estimated population size based on early surveys [@Butler2006], and at San Clemente Island where commercial landings were historically greatest [@Hobday2000;@Hobday2001].  
 
 **Table 1.** A summary of remotely operated vehicle survey effort and white abalone observations by site, ordered descending by the total number of transects at a given site. Observations of white abalone for which shell length was not measured are not presently included in this table, but will be added when data become available.
 
@@ -176,17 +183,23 @@ site.summ.tbl <- site.summ.all
 site.summ.tbl[is.na(site.summ.tbl)] <- "-"
 names(site.summ.tbl) <- c("Survey site","Dives","Observations","Years")
 
-site.tbl <- hux(site.summ.tbl,add_colnames = T) %>% 
-  # Make column names bold
-  set_bold(1,everywhere,TRUE) %>% 
-  # Align columns
-  set_align(1:nrow(site.summ.tbl) + 1,everywhere,'right') %>% 
-  set_align(everywhere,1,'left') %>% 
-  set_align(1,everywhere,'center') %>% 
-  # Set decimal precision
-  set_number_format(everywhere,2:4,0)
-
-kable(site.summ.tbl)
+if (doc.type == "docx") {
+  regulartable(site.summ.tbl) %>% 
+    theme_booktabs() %>% 
+    align(align = "center",part = "header") %>%
+    align(align = "left",part = "body") %>% 
+    align(j = 2:3,align = "right") %>% 
+    autofit()
+} else {
+  kable(site.summ.tbl,
+        format = knitr.format,booktabs = T, escape = F,
+        align = c("l","c","r","r"),
+        digits = c(0),
+        format.args = list(big.mark = ",")) %>% 
+    kable_styling(latex_options = c("striped","condensed"),
+                  position = "center")
+    
+}
 ```
 
 In 2002, bathymetric mapping was conducted at Tanner Bank, Cortes Bank, San Clemente Island, and Farnsworth Bank (off the coast of Santa Catalina Island) using a multibeam sonar to identify areas of rocky substrate and quantify the amount of potentially available white abalone habitat (**Figure 1**). Next, depth-stratified visual transect surveys were conducted using an ROV at each location to estimate white abalone density, abundance, and size structure. The results from surveys in 2002 and 2004 provided a “baseline” estimate of available habitat, abundance, and size structure of the populations in these areas. Subsequent visual surveys conducted at Tanner Bank in 2008 and 2010 indicated that the population at that site had declined by approximately 78% since 2002 despite protection under ESA [@Stierhoff2012b]. Data from the most recent survey conducted at Tanner Bank and Cortes Bank in 2014 are still being analyzed, but preliminary results indicate the the population at those two sites remain severely depleted (K. Stierhoff, unpublished data). The majority of white abalone observed at Tanner Bank have been singletons (i.e., solitary, reproductively isolated individuals with > 2 m nearest neighbor distance), large (> 9 cm), and the mean length in each survey has increased over time, which suggests an aging population of mostly isolated individuals with little or no indication of recent recruitment. A survey at San Clemente Island in 2012 suggested a small but stable remnant population [@Stierhoff2014], but the extremely low density at that site resulted in population estimates with high uncertainty. A subsequent survey at San Clemente Island in 2015 observed only two white abalone in 36 transects [@Neuman2017]. The low numbers of observations resulted in estimates of population size that are too imprecise for statistical comparisons to results from the 2004 or 2012 survey. If population trends are to be detected in extremely low-density areas like San Clemente Island, increased survey effort, improved survey design (perhaps through the development of predictive models that better identify potential white abalone habitat), or both will be necessary.  
@@ -265,11 +278,9 @@ sci.map <- ggplot(filter(nav,site_general == 'San Clemente Island'),aes(lon,lat,
 #### Exporatory surveys in other potentially viable deep-water habitats  
 In addition to the more intensive sampling conducted at the long-term monitoring sites, smaller-scale surveys have been conducted at some areas where white abalone have been observed or are thought to occur (**Table 1**). In 2008, five visual transect surveys were conducted at Farnsworth Bank off Santa Catalina Island, but only one white abalone was observed. However, numerous other white abalone were apparently observed at Farnsworth Bank in 2005 but never measured or logged so have gone unreported to date; those videos will be reviewed and the results of those transects will be used to determine whether additional emphasis should be placed on that site, and how the presence of those animals may affect the outlook of white abalone in the SCB. In 2015, 20 visual transects were conducted at two sites near Palos Verdes, CA (“The Ridges” and “Horseshoe Kelp”). These two sites are relatively shallow (approximately 20-40 m), have been surveyed by numerous groups using SCUBA, and are known to be habitat for white and pinto abalone (_H. kamtschatkana_). During that survey, three white abalone were observed and 29 pinto abalone. 
 
-The delisting of white abalone under ESA requires consideration of the species' population status throughout its known geograpical range, which extends south of the US-Mexico Border to Punta Abreojos, Baja California, Mexico. In 2006, ROV surveys of supposed white abalone habitats were conducted in cooperation with fishery managers and members of the local fishing coopertives (or cooperativos) around the Coronado Islands (n = `r site.summ.all$dives[site.summ.all$site_general == 'Coronado Islands']` transects), off Punta San Jose (near Ensenada; n = `r site.summ.all$dives[site.summ.all$site_general == 'Punta San Jose']` transects)) and around Isla Natividad (n = `r site.summ.all$dives[site.summ.all$site_general == 'Isla Natividad']` transects). Zero white abalone were observed during those transects and questions remain about whether scientists were actually directed to likely white abalone habitat. Following the First Binational Abalone Symposium hosted by CICESE in Ensenada, Baja California in 2016, renewed cooperation and enthusiasm emerged around common areas of interest and objectives toward white abalone recovery. To seize this opportunity, US (SWFSC and WCRO) and Mexican (CICESE, COBI) scientists and cooperativo fishermen sought funding to support additional studies of white abalone habitats along the mainland Baja California coast, Guadalupe Island, or both (to be determined following additional discussion with Mexican colleagues and fishermen). In 2017, funding was received from the NMFS Office of Scientific and Technology International Research Program and the NMFS Office of Protected Resources (\$85K total) to conduct new surveys in high-probability white abalone habitats to provide critical information on the status of white abalone populations in Mexico. The goals of that research is to 1) better understand the current status of white abalone in Mexico; 2) identify habitat features that may promote white abalone growth and survival; 3) examine the genetic diversity of populations rangewide; and 4) build our capacity to share methods and data (e.g., ROV, SCUBA, multibeam sonar mapping, environmental sensor deployment, non-invasive tissue collection) with our Mexican colleagues. The AST Group will conduct the visual surveys, multibeam mapping and subsequent data processing, and provide information to the   
+The delisting of white abalone under ESA requires consideration of the species' population status throughout its known geograpical range, which extends south of the US-Mexico Border to Punta Abreojos, Baja California, Mexico. In 2006, ROV surveys of supposed white abalone habitats were conducted in cooperation with fishery managers and members of the local fishing coopertives (or cooperativos) around the Coronado Islands (n = `r site.summ.all$dives[site.summ.all$site_general == 'Coronado Islands']` transects), off Punta San Jose (near Ensenada; n = `r site.summ.all$dives[site.summ.all$site_general == 'Punta San Jose']` transects)) and around Isla Natividad (n = `r site.summ.all$dives[site.summ.all$site_general == 'Isla Natividad']` transects). Zero white abalone were observed during those transects and questions remain about whether scientists were actually directed to likely white abalone habitat. Following the First Binational Abalone Symposium hosted by CICESE in Ensenada, Baja California in 2016, renewed cooperation and enthusiasm emerged around common areas of interest and objectives toward white abalone recovery. To seize this opportunity, U.S. (SWFSC and WCRO) and Mexican (CICESE, COBI) scientists and cooperativo fishermen sought funding to support additional studies of white abalone habitats along the mainland Baja California coast, Guadalupe Island, or both (to be determined following additional discussion with Mexican colleagues and fishermen). In 2017, funding was received from the NMFS Office of Scientific and Technology International Research Program and the NMFS Office of Protected Resources (\$85K total) to conduct new surveys in high-probability white abalone habitats to provide critical information on the status of white abalone populations in Mexico. The goals of that research is to 1) better understand the current status of white abalone in Mexico; 2) identify habitat features that may promote white abalone growth and survival; 3) examine the genetic diversity of populations rangewide; and 4) build our capacity to share methods and data (e.g., ROV, SCUBA, multibeam sonar mapping, environmental sensor deployment, non-invasive tissue collection) with our Mexican colleagues. The AST Group will conduct the visual surveys, multibeam mapping, and subsequent processing of visual and acoustic data processing, and provide those results to resource managers in the U.S. and Mexico.  
 
-##Research Theme 2 - Improving survey methods using advanced technology  
-**OVERVIEW OF RESEARCH THEME 2**  
-
+## Research Theme 2 - Improving survey methods using advanced technology  
 ### Research foci for Theme 2  
 #### Design and improvement of visual survey tools  
 In 1999, a ROV (_Phantom 2+2_, Deep Ocean Engineering) was purchased to conduct visual surveys of white abalone and generate baseline population estimates soon after the species was listed as endangered under the ESA. The earliest configuration of this ROV was rated to a water depth of 500 m and had a standard definition video camera (NTSC, 520 x 480 lines of resolution), halogen lights, and four thrusters (two horizontal, two vert-trans). There was no means of tracking the location of the ROV from the ship, and no tether management. Over time, the ROV hull was upgraded to a _Phantom DS4_ (2001), which added two horizontal thrusters and increased the depth rating. Furthermore, additional cameras and sensors were added to improve the quality and quantity of data and imagery collected during surveys including: a high-resolution (3 megapixel) digital still camera (2003; Scorpio Plus, Insite Pacific) and strobes; calibrated, high-intensity lasers for estimating the size and range of targets observed near the seabed; a Doppler velocity log (2005; 1200 kHz Workhourse Navigator, Teledyne) for precise estimation of speed, distance, and altitude; a conductivity-temperature-depth (2006; Citadel CTD, RDI Teledyne) probe and oxygen optode (Model 3975, Aanderaa); an ultrashort baseline acoustic tracking system (2002; TrackPoint-IIplus, ORE Offshore); and a forward-looking scanning sonar (2005; MS1000, Kongsberg-Simrad). In 2010, a more precise and user-friendly USBL (TrackLink 1500HA, LinkQuest) was added.
@@ -311,8 +322,23 @@ In 2000, soon after white abalone were listed as endangered under the ESA, the S
 **Table 2.** Discretionary funding (\$) provided to the SWFSC by the WCRO in support of white abalone field monotoring.  
 
 ```{r WCROfunds}
+# Import WCRO funding data
 wcro.funds <- read_csv("../Data/WCRO_funds.csv")
-kable(wcro.funds)
+# Format and print table
+if (doc.type == "docx") {
+  regulartable(wcro.funds) %>% 
+    theme_booktabs() %>%
+    set_formatter(Amount = function(x) sprintf("$%.0f", x)) %>%
+    align(align = "center",part = "header") %>%
+    autofit()
+} else {
+  kable(wcro.funds, format = knitr.format,booktabs = T, escape = F,
+        align = c("c","r"),
+        digits = c(0)) %>% 
+    kable_styling(latex_options = c("striped","condensed"),
+                  position = "center") %>% 
+    row_spec(0, align = c("c"))
+}
 ```  
 
 ## Interagency Agreements  
@@ -321,8 +347,24 @@ Given the limited amount of funding generally available from internal sources, a
 **Table 3.** Fiscal year, amount (\$), and agreement number for agreements between the Navy and NOAA.  
 
 ```{r MIPRfunds, fig.height=5, fig.width=5}
+# Import MIPR funds
 mipr.funds <- read_csv("../Data/MIPR_funds.csv")
-kable(mipr.funds)
+# Format and print table
+if (doc.type == "docx") {
+  regulartable(mipr.funds) %>% 
+    theme_booktabs() %>%
+    set_formatter(Amount = function(x) sprintf("$%.0f", x)) %>%
+    align(align = "center",part = "header") %>%
+    align(j = c(1,3),align = "left") %>% 
+    autofit()
+} else {
+  kable(mipr.funds, format = knitr.format,booktabs = T, escape = F,
+        align = c("l","r","l"),
+        digits = c(0)) %>% 
+    kable_styling(latex_options = c("striped","condensed"),
+                  position = "center") %>% 
+    row_spec(0, align = c("c"))
+}
 ```
 
 ## US Navy/NOAA Memorandum of Agreement  
@@ -355,14 +397,14 @@ grid::grid.raster(img)
 # 5-year Research Plan
 Since most funding is received on a fiscal year (FY) schedule, planning is described on a FY calendar (October 1 - September 30). Projects are rougly planned by anticipated funding in each year and expected numbers of days at sea (DAS; \$8K/d will be used as an estimated cost of a sea day based on prior experience). Optimally, ROV surveys will be planned for the fall (October to December), as weather is generally more favorable to surveying offshore and the schedules of fishing boats used as support vessels are more open and flexible. Funding is from anticipated US Navy funds as scheduled in **Table 4**; carry-over may be requested for funds received in one FY to be used in a subsequent FY.  
 
-##FY2017  
+## FY2017  
 The SWFSC AST currently has ~\$60K (~5 DAS) earmarked for comparative ROV and SCUBA surveys at San Clemente Island or elsewhere. Given the difficulties of conducting paired surveys at Santa Catalina Island in 2016, it is anticipated that similar challenges would be encountered at San Clemente Island, where kelp is dense in shallow water and white abalone density is known to be low. Instead, the PIs are considering a comparative survey on a shallow reef off Point Loma where white, pink, and pinto abalone are known to occur in moderate densities and kelp cover is minimal, thus more closely resembling deep-water habitats where white abalone are typically encountered using the ROV. We are currently attempting to identify a time to conduct this survey that perhaps coincides with other planned ROV surveys to minimize mobilization/demobilization effort and costs while not conflicting with other AST surveys (e.g., summer acoustic-trawl survey of coastal pelagic fishes).  
 
 * **October 2017 - January 2018**  
 **SCUBA support of acoustic telemetry study at Point Loma** (~1-2 d/mo)  
 **Primary objectives:** Provide SCUBA support for abalone tagging and the deployment and service of acoustic telemetry array throughout the 6-month study (study initiated July 2017).  
 
-##FY2018
+## FY2018
 * **March 2018**  
 **Survey white abalone and their habitats in Baja California, Mexico** (10 DAS; \$85K)  
 **Primary objectives:** Conduct ROV surveys of potential white abalone habitats to estimate density, abundance, and size/age distribution during daytime. Map potential white abalone habitats using multibeam acoustics during nighttime. Use SCUBA to conduct visually examine observed white abalone, collect tissue samples for genetic analysis, estimate nearest neighbor distance (if possible), and deploy environmental data loggers to provide additional information to characterize white abalone habitat.  
@@ -371,7 +413,7 @@ The SWFSC AST currently has ~\$60K (~5 DAS) earmarked for comparative ROV and SC
 **SCUBA support of white abalone brood stock collection** (~1 d/mo)  
 **Primary objectives:** Provide SCUBA support for the identification and collection of white abalone for brood stock.  
 
-##FY2019  
+## FY2019  
 * **Fall 2019**  
 **ROV survey of white abalone at Tanner and Cortes Bank** (20 DAS; \$190K)  
 **Primary objectives:** Conduct depth-stratified visual transect surveys in potential white abalone habitats to quantify density, abundance, group size, and size distribution. Identify and provide locations of isolated individuals for potential brood stock collection.
@@ -383,12 +425,12 @@ The SWFSC AST currently has ~\$60K (~5 DAS) earmarked for comparative ROV and SC
 **SCUBA support of white abalone brood stock collection** (~1 d/mo)  
 **Primary objectives:** Provide SCUBA support for the identification and collection of white abalone for brood stock.  
 
-##FY2020
+## FY2020
 * **Throughout FY2020**  
 **SCUBA support of white abalone brood stock collection** (~1 d/mo)  
 **Primary objectives:**  Provide SCUBA support for the identification and collection of white abalone for brood stock.  
 
-##FY2021
+## FY2021
 * **October 2021 - ROV survey of white abalone at Tanner and Cortes Bank** (20 DAS; \$190K)  
 **Primary objectives:** Conduct depth-stratified visual transect surveys in potential white abalone habitats to quantify density, abundance, group size, and size distribution. Identify and provide locations of isolated individuals for potential brood stock collection.
 
@@ -398,7 +440,7 @@ The SWFSC AST currently has ~\$60K (~5 DAS) earmarked for comparative ROV and SC
 * **Throughout FY2021: SCUBA support of white abalone brood stock collection** (~1 d/mo)  
 **Primary objectives:**  Provide SCUBA support for the identification and collection of white abalone for brood stock.  
 
-##FY2022  
+## FY2022  
 * **Throughout FY2022: SCUBA support of white abalone brood stock collection** (~1 d/mo)  
 **Primary objectives:**  Provide SCUBA support for the identification and collection of white abalone for brood stock.  
 
